@@ -6,21 +6,23 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# 환경 변수에서 LLM 제공자 및 설정 로드
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq").lower() # 기본값은 groq
+
 # Groq API 설정
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-MODEL_NAME = "llama3-8b-8192" 
+GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME", "llama3-8b-8192")
 
-def convert_natural_language_to_sql(natural_query: str, db_schema: str):
-    """
-    자연어 질문과 DB 스키마를 기반으로, Groq LLM을 호출하여 SQL 쿼리를 생성합니다.
-    """
-    if not GROQ_API_KEY:
-        return "GROQ_API_KEY가 .env 파일에 설정되지 않았습니다."
+# Ollama API 설정
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+OLLAMA_MODEL_NAME = os.getenv("OLLAMA_MODEL_NAME", "gemma:7b")
 
-    # Instruction-tuned 모델에 맞는 형식으로 프롬프트를 구성합니다.
-    # 모델이 역할을 명확히 인지하고, 요구사항에만 집중하도록 지시합니다.
-    messages = [
+def _build_messages(natural_query: str, db_schema: str):
+    """
+    LLM에 전달할 메시지 형식을 구성합니다.
+    """
+    return [
         {
             "role": "system",
             "content": f"""
@@ -44,14 +46,20 @@ def convert_natural_language_to_sql(natural_query: str, db_schema: str):
         }
     ]
 
-    # Groq API에 보낼 데이터 페이로드
+def _call_groq_api(messages: list):
+    """
+    Groq API를 호출하여 SQL 쿼리를 생성합니다.
+    """
+    if not GROQ_API_KEY:
+        raise ValueError("GROQ_API_KEY가 .env 파일에 설정되지 않았습니다.")
+
     payload = {
-        "model": MODEL_NAME,
+        "model": GROQ_MODEL_NAME,
         "messages": messages,
-        "temperature": 0.0, # 일관된 결과를 위해 온도를 0으로 설정
-        "max_tokens": 128, # 최대 생성 토큰 수
+        "temperature": 0.0,
+        "max_tokens": 128,
         "top_p": 0.9,
-        "stop": ["\n\n"] # SQL 쿼리 생성 후 중지하도록 유도
+        "stop": ["\n\n"]
     }
 
     headers = {
@@ -59,13 +67,52 @@ def convert_natural_language_to_sql(natural_query: str, db_schema: str):
         "Content-Type": "application/json"
     }
 
-    try:
-        # Groq API에 POST 요청을 보냅니다.
-        response = requests.post(GROQ_API_URL, headers=headers, json=payload)
-        response.raise_for_status()  # HTTP 에러가 발생하면 예외를 발생시킴
+    response = requests.post(GROQ_API_URL, headers=headers, json=payload)
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"].strip()
 
-        # 응답 받은 JSON 텍스트에서 'content' 키의 값을 추출합니다.
-        response_text = response.json()["choices"][0]["message"]["content"].strip()
+def _call_ollama_api(messages: list):
+    """
+    Ollama API를 호출하여 SQL 쿼리를 생성합니다.
+    """
+    ollama_url = f"{OLLAMA_BASE_URL}/api/chat"
+    payload = {
+        "model": OLLAMA_MODEL_NAME,
+        "messages": messages,
+        "stream": False, # 스트리밍 비활성화
+        "options": {
+            "temperature": 0.0,
+            "num_predict": 128,
+            "top_p": 0.9,
+            "stop": ["\n\n"]
+        }
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(ollama_url, headers=headers, json=payload)
+    response.raise_for_status()
+    return response.json()["message"]["content"].strip()
+
+def convert_natural_language_to_sql(natural_query: str, db_schema: str):
+    """
+    자연어 질문과 DB 스키마를 기반으로 LLM을 호출하여 SQL 쿼리를 생성합니다.
+    LLM_PROVIDER 환경 변수에 따라 Groq 또는 Ollama를 사용합니다.
+    """
+    messages = _build_messages(natural_query, db_schema)
+    response_text = ""
+
+    try:
+        if LLM_PROVIDER == "groq":
+            print(f"Using Groq API with model: {GROQ_MODEL_NAME}")
+            response_text = _call_groq_api(messages)
+        elif LLM_PROVIDER == "ollama":
+            print(f"Using Ollama API with model: {OLLAMA_MODEL_NAME} at {OLLAMA_BASE_URL}")
+            response_text = _call_ollama_api(messages)
+        else:
+            return f"지원하지 않는 LLM_PROVIDER: {LLM_PROVIDER}. 'groq' 또는 'ollama' 중 하나여야 합니다."
+
         print(f"Raw response from model: {response_text}")
         
         # 모델이 가끔 ```sql ... ``` 형식으로 응답할 경우를 대비한 처리
@@ -85,8 +132,11 @@ def convert_natural_language_to_sql(natural_query: str, db_schema: str):
         return final_sql
 
     except requests.exceptions.RequestException as e:
-        print(f"Groq API 호출 중 오류 발생: {e}")
-        return f"Groq API 호출 중 오류 발생: {e}"
+        print(f"API 호출 중 오류 발생: {e}")
+        return f"API 호출 중 오류 발생: {e}"
+    except ValueError as e:
+        print(f"설정 오류: {e}")
+        return f"설정 오류: {e}"
     except Exception as e:
         print(f"SQL 생성 중 알 수 없는 오류 발생: {e}")
         return "SQL 생성 중 오류가 발생했습니다."
