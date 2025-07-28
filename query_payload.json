@@ -1,0 +1,4 @@
+{
+  "natural_query": "모든 사용자를 보여줘",
+  "db_schema": "Table `orders` (\r\n  `order_id` int,\r\n  `user_id` int,\r\n  `product_name` varchar(100),\r\n  `amount` decimal(10,2),\r\n  `order_date` date,\r\n);\r\n\r\nTable `post` (\r\n  `post_id` binary(16),\r\n  `author` varchar(255),\r\n  `contents` varchar(255),\r\n  `created_date_time` datetime(6),\r\n  `title` varchar(255),\r\n);\r\n\r\nTable `user` (\r\n  `user_id` binary(16),\r\n  `email` varchar(255),\r\n  `name` varchar(255),\r\n  `password` varchar(255),\r\n);\r\n\r\nTable `users` (\r\n  `id` int,\r\n  `user_name` varchar(50),\r\n  `email` varchar(100),\r\n  `signup_date` date,\r\n)"
+}

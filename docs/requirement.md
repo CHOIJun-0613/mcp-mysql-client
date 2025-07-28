@@ -1,17 +1,17 @@
-# MCP(Model Context Protocol)를 Study하면서 직접 구현하려고 함.
+# MCP(Model Context Protocol)를 직접 구현하려고 함.
 
 ##1. 목적
 
-###1 VS Code의 Gemini Code Assist에서 MySQL DB서버에 연결
+###1 Cursor AI에서 MCP를 통해 MySQL DB서버에 연결하려고 함
 
-###2 Code Assist chat 화면에서 MySQL에 자연어로 데이터를 조회하려고 함
+###2 Cursor AI chat 창에서 MySQL에 자연어로 데이터를 조회하려고 함
 
 
 ##2. 개발환경
 
 ###1 개발도구: VS Code
 
-###2 개발언어: 추천해줘
+###2 개발언어: Python
 
 
 ##3. 제반 사항
@@ -29,11 +29,7 @@
 
 ###2 소스 제공: 구현해야할 대상 별로 모든 소스를 코멘트 추가해서 제공해줘
 
-###3 개발 언어: Python
-
-###4 LLM: LLM이 연계가 필요하면 오픈소스 기반 한글을 충분히 지원하는 모델 제시 
-
-###5 README.md: 이 프로젝트에 대한 제반사항을 정리해서 README.md로 저장해줘
+###3 README.md: 이 프로젝트에 대한 제반사항을 정리해서 README.md로 저장해줘
 
 
 ##5. 프로젝트 구조

@@ -35,6 +35,7 @@ async def handle_mcp_query(request: QueryRequest):
         raise HTTPException(status_code=500, detail=db_schema)
 
     sql_query = nlp.convert_natural_language_to_sql(natural_query, db_schema)
+    print(f"Generated SQL Query: {sql_query}")
     if "오류" in sql_query or "설정되지 않았습니다" in sql_query:
         raise HTTPException(status_code=500, detail=sql_query)
 
