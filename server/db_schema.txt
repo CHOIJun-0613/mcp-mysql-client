@@ -1,0 +1,30 @@
+Table `orders` (
+  `order_id` int,
+  `user_id` int,
+  `product_name` varchar(100),
+  `amount` decimal(10,2),
+  `order_date` date,
+);
+
+Table `post` (
+  `post_id` binary(16),
+  `author` varchar(255),
+  `contents` varchar(255),
+  `created_date_time` datetime(6),
+  `title` varchar(255),
+);
+
+Table `user` (
+  `user_id` binary(16),
+  `email` varchar(255),
+  `name` varchar(255),
+  `password` varchar(255),
+);
+
+Table `users` (
+  `id` int,
+  `user_name` varchar(50),
+  `email` varchar(100),
+  `signup_date` date,
+);
+
