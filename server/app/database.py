@@ -12,7 +12,7 @@ DB_NAME = os.getenv("DB_NAME")
 def get_db_connection():
     try:
         connection = mysql.connector.connect(
-            host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME
+            host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME, charset='utf8mb4', use_unicode=True, collation='utf8mb4_unicode_ci'
         )
         return connection
     except mysql.connector.Error as e:
@@ -52,6 +52,12 @@ def execute_query(query: str):
         cursor.execute(query)
         if query.strip().upper().startswith("SELECT"):
             result_data = cursor.fetchall()
+            # Convert bytes to hex string for UUIDs
+            for row in result_data:
+                for key, value in row.items():
+                    if isinstance(value, bytes):
+                        row[key] = value.hex()
+            print(f"Raw data from DB: {result_data}")
         else:
             connection.commit()
             result_data = f"{cursor.rowcount} rows affected."
