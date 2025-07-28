@@ -46,3 +46,11 @@ async def handle_mcp_query(request: QueryRequest):
     return QueryResponse(
         natural_query=natural_query, sql_query=sql_query, status=status, data=data
     )
+
+if __name__ == "__main__":
+    import uvicorn
+    # This allows running the app directly for development.
+    # Make sure to run from the project root after activating the venv:
+    # python -m server.app.main
+    # The --reload flag automatically restarts the server on code changes.
+    uvicorn.run("server.app.main:app", host="0.0.0.0", port=8000, reload=True)
