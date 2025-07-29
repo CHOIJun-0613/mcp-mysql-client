@@ -31,10 +31,8 @@ def _build_messages(natural_query: str, db_schema: str):
 - 어떠한 설명이나 다른 텍스트도 포함하지 마세요.
 - 필요한 경우에만 테이블을 JOIN하세요. 불필요한 JOIN은 피하세요.
 - 데이터베이스 스키마에 명시된 정확한 테이블 및 컬럼 이름을 사용하세요. (예: `users` 테이블의 '사용자 이름'은 `user_name` 컬럼입니다.)
-- '사용자의 이름', '사용자명', '사용자 이름'에 대한 쿼리를 생성할 때는 항상 `users` 테이블의 `user_name` 컬럼을 사용하세요.
 - 테이블을 JOIN할 경우에도 데이터베이스 스키마에 명시된 정확한 테이블 및 컬럼 이름을 사용하세요.
 - 사용자의 질문에 직접적으로 관련된 컬럼만 선택하거나, 명시되지 않은 경우 모든 컬럼을 선택하세요.
-- 사용자의 이름을 조회하거나 참조할 때는 항상 `users` 테이블의 `user_name` 컬럼을 사용하세요.
 
 ### 데이터베이스 스키마:
 {db_schema}
@@ -121,11 +119,6 @@ def convert_natural_language_to_sql(natural_query: str, db_schema: str):
         if response_text.endswith("```"):
             response_text = response_text[:-len("```")].strip()
 
-        # users 테이블의 'name' 컬럼을 'user_name'으로 대체 (모델이 계속 'name'을 생성하는 문제 해결)
-        if "FROM users" in response_text.upper():
-            response_text = re.sub(r'\bname\b', 'user_name', response_text, flags=re.IGNORECASE)
-            response_text = re.sub(r'([a-zA-Z0-9_]+\.)name', r'\1user_name', response_text, flags=re.IGNORECASE)
-            print(f"After name replacement: {response_text}")
         # 세미콜론이 여러 개 붙는 경우를 방지
         final_sql = response_text.strip().rstrip(';') + ';'
         print(f"Processed SQL before return: {final_sql}")
