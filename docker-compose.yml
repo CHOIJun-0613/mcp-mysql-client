@@ -1,5 +1,5 @@
 version: '3.9'
-
+ 
 services:
   db:
     image: mysql:8.0
@@ -18,6 +18,27 @@ services:
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
+
+  ollama:
+    # ollama/ollama 공식 이미지를 직접 사용합니다. 버전은 기존 Dockerfile과 동일하게 고정합니다.
+    image: ollama/ollama:0.1.41
+    # 컨테이너 이름을 'ollama-container'로 지정합니다.
+    container_name: ollama-container
+    restart: always
+    # 다운로드한 LLM 모델을 영구적으로 저장하기 위해 볼륨을 마운트합니다.
+    # 이렇게 하면 Gitpod 워크스페이스가 재시작되어도 모델을 다시 다운로드할 필요가 없습니다.
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    # GPU 사용이 가능한 환경(예: Gitpod 유료 플랜)에서는 아래 주석을 해제하여 성능을 크게 향상시킬 수 있습니다.
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
 volumes:
   mysql_data:
-
+  ollama_data:

@@ -2,12 +2,17 @@ image:
   file: .gitpod.Dockerfile
  
 tasks:
-  - name: MySQL Server 
+  - name: Services (MySQL & Ollama)
     init: |
-      docker pull mysql:8.0
+      # docker-compose.yml에 정의된 모든 서비스(MySQL, Ollama)를 백그라운드에서 시작합니다.
+      docker-compose up -d
+      # Ollama 컨테이너가 실행된 후, gemma:7b 모델을 설치합니다.
+      # ollama_data 볼륨 덕분에 모델은 최초 한 번만 다운로드됩니다.
+      echo "Ollama 컨테이너에 gemma:7b 모델을 설치합니다. (최초 실행 시 시간이 소요될 수 있습니다)"
+      docker exec ollama-container ollama pull gemma:7b
     command: | 
-      docker-compose down -v && docker-compose up -d
-      docker ps
+      echo "MySQL과 Ollama 컨테이너가 실행 중입니다. 'docker ps -a'로 상태를 확인하세요."
+      docker ps -a
     openMode: split-left
   - name: Python Environment 
     init: |
@@ -32,4 +37,9 @@ tasks:
 ports:
   - port: 3306
     visibility: public
+    name: MySQL
+    onOpen: ignore
+  - port: 11434
+    visibility: public
+    name: Ollama API
     onOpen: ignore
