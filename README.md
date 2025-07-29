@@ -22,7 +22,7 @@ pip install -r client/requirements.txt
 
 ### 4. 서버 실행
 ```bash
-uvicorn server.app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### 5. 클라이언트 실행

@@ -1,0 +1,17 @@
+# FastAPI: Modern, fast (high-performance), web framework for building APIs.
+fastapi
+
+# Uvicorn: Lightning-fast ASGI(Asynchronous Server Gateway Interface) server, used to run the FastAPI application.
+# [standard] includes recommended extras for better performance and features.
+uvicorn[standard]
+
+# MySQL Connector/Python: Official Oracle driver for connecting Python applications to MySQL.
+mysql-connector-python
+
+# python-dotenv: Reads key-value pairs from a .env file and can set them as environment variables.
+python-dotenv
+
+# Ollama: The official Python library for interacting with the Ollama service.
+ollama
+
+requests
