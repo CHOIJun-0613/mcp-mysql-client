@@ -7,7 +7,7 @@ FASTMCP_SERVER_URL = "http://localhost:8000/query"
 
 # 테스트할 한국어 질문
 #natural_query = "가장 많은 주문을 한 사용자의 이름과 이메일을 조회해줘 (주문 건수 기준)"
-natural_query = "가장 비싼 상품을 주문한 사용자의 이름과 상품명을 조회해줘."
+natural_query = "가장 많은 주문을 한 사용자의 이름과 이메일을 조회해줘 (주문 건수 기준)."
 
 
 '''
