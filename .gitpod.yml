@@ -1,0 +1,35 @@
+image:
+  file: .gitpod.Dockerfile
+ 
+tasks:
+  - name: MySQL Server 
+    init: |
+      docker pull mysql:8.0
+    command: | 
+      docker-compose down -v && docker-compose up -d
+      docker ps
+    openMode: split-left
+  - name: Python Environment 
+    init: |
+      mkdir -p server
+      python3 -m venv server/venv
+      source server/venv/bin/activate
+      pip install -U pip
+      
+      cd server
+      if [ -f ./requirements.txt ]; then
+        pip install -r ./requirements.txt
+      fi
+      echo "Python 가상 환경이 'server/venv'에 생성되었습니다. 'source server/venv/bin/activate' 명령어로 활성화하세요."
+    command: |
+      python --version
+      pip --version
+    openMode: split-right
+  - name: My Work 
+    command: |
+      date
+    openMode: tab-after  
+ports:
+  - port: 3306
+    visibility: public
+    onOpen: ignore
