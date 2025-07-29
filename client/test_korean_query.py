@@ -7,11 +7,11 @@ FASTMCP_SERVER_URL = "http://localhost:8000/query"
 
 # 테스트할 한국어 질문
 #natural_query = "가장 많은 주문을 한 사용자의 이름과 이메일을 조회해줘 (주문 건수 기준)"
-natural_query = "사용자 이름이 '홍길동', '이순신', '강감찬'인 사용자의 사용자이름, 이메일과 가입일을 조회해줘."
+natural_query = "가장 비싼 상품을 주문한 사용자의 이름과 상품명을 조회해줘."
 
 
 '''
-     1. 이메일 주소가 'gildong@example.com'인 사용자의 이름과 가입일을 알려줘.
+   1. 이메일 주소가 'gildong@example.com'인 사용자의 이름과 가입일을 알려줘.
        * (예상 SQL: SELECT user_name, signup_date FROM users WHERE email = 'gildong@example.com';)
 
    2. 노트북을 주문한 사용자의 이름과 이메일을 조회해줘.
