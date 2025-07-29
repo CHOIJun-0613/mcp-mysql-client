@@ -1,5 +1,5 @@
 version: '3.9'
-
+ 
 services:
   db:
     image: mysql:8.0
@@ -18,6 +18,24 @@ services:
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
+
+  ollama:
+    image: ollama/ollama:0.1.41
+    container_name: ollama-container
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # GPU를 사용할 수 있는 환경이라면 아래 주석을 해제하세요. (예: 로컬 Docker Desktop with GPU)
+    # Gitpod 표준 환경에서는 GPU를 지원하지 않습니다.
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
 volumes:
   mysql_data:
-
+  ollama_data:

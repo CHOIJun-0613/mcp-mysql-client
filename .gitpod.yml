@@ -2,11 +2,27 @@ image:
   file: .gitpod.Dockerfile
  
 tasks:
-  - name: MySQL Server 
+  - name: Server (MySQL & Ollama)
     init: |
       docker pull mysql:8.0
+      docker pull ollama/ollama:0.1.41
     command: | 
       docker-compose down -v && docker-compose up -d
+      
+      echo "Waiting for Ollama container to be ready..."
+      until docker exec ollama-container ollama list > /dev/null 2>&1; do
+        echo -n "."
+        sleep 2
+      done
+      echo -e "\nOllama is ready."
+
+      if ! docker exec ollama-container ollama list | grep -q "gemma:7b"; then
+        echo "gemma:7b model not found. Pulling the model..."
+        docker exec ollama-container ollama pull gemma:7b
+      else
+        echo "gemma:7b model already exists."
+      fi
+
       docker ps
     openMode: split-left
   - name: Python Environment 
@@ -30,6 +46,9 @@ tasks:
       date
     openMode: tab-after  
 ports:
+  - port: 11434
+    visibility: public
+    onOpen: ignore
   - port: 3306
     visibility: public
     onOpen: ignore
