@@ -4,7 +4,7 @@ CREATE TABLE users (
     user_name VARCHAR(50) NOT NULL COMMENT '사용자 이름',
     email VARCHAR(100) NOT NULL UNIQUE COMMENT '이메일 주소',
     signup_date DATE COMMENT '가입일'
-);
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 주문 정보를 저장하는 테이블
 CREATE TABLE orders (
@@ -14,7 +14,7 @@ CREATE TABLE orders (
     amount DECIMAL(10, 2) NOT NULL COMMENT '주문 금액',
     order_date DATE COMMENT '주문일',
     FOREIGN KEY (user_id) REFERENCES users(id)
-);
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 샘플 사용자 데이터 삽입
 INSERT INTO users (user_name, email, signup_date) VALUES
