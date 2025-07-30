@@ -27,9 +27,9 @@ while ! ollama list >/dev/null 2>&1; do
     sleep 2
 done
 
-echo "Checking for llama3:8b model and pulling if it does not exist..."
-# llama3:8b 모델이 없으면 다운로드합니다. 이미 있다면 이 단계는 건너뜁니다.
-ollama pull llama3:8b
+echo "Checking for gemma:7b model and pulling if it does not exist..."
+# gemma:7b 모델이 없으면 다운로드합니다. 이미 있다면 이 단계는 건너뜁니다.
+ollama pull gemma:7b
 
 echo "Ollama is ready to serve."
 
